@@ -33,7 +33,7 @@ Para obtener el proyecto tienes dos opciones:
 
    Esto te llevará a la siguiente pantalla, donde deberás seguir los siguientes pasos:
 
-
+<img width="1072" height="672" alt="image" src="https://github.com/user-attachments/assets/d12f967f-0993-41b5-8619-2602d2376cf3" />
    
 Esto descargará un archivo comprimido `.zip`, que podras alojar en el directorio que desees.
 
@@ -72,6 +72,16 @@ Esto descargará un archivo comprimido `.zip`, que podras alojar en el directori
 
 ## 4. Descripción de los datos 📊
 
+La base de datos utilizada proviene de la etapa anterior del presente proyecto, donde se realizó exploración y limpieza de los datos, los cuales pueden obtenerse en el siguiente enlace:
+
+<a href="https://github.com/ignaciomajo/proyecto_TelecomX/tree/main/src">Base de datos</a>
+
+Se tomaron los archivos📄: 
+
+* <a href="https://raw.githubusercontent.com/ignaciomajo/proyecto_TelecomX/refs/heads/main/src/preprocessed_TelecomX_data.json">preprocessed_TelecomX_data.json</a>
+* <a href="https://raw.githubusercontent.com/ignaciomajo/proyecto_TelecomX/refs/heads/main/src/clientes_altovalor_abandonan.json">clientes_altovalor_abandonan.json</a>
+
+Ambos archivos se integraron en un único dataset de **7152 observaciones**. El archivo **clientes_altovalor_abandonan.json** contiene los clientes identificados como outliers en la etapa anterior, que, aunque fueron apartados para un análisis aislado, se incluyeron en este proyecto para representar con mayor fidelidad el patrón general de comportamiento del cliente.
 
 ### Variables
 
@@ -94,12 +104,43 @@ Esto descargará un archivo comprimido `.zip`, que podras alojar en el directori
 | `Contract`         | Categórica | Tipo de contrato                          | `'Month-to-month'`, `'One year'`, `'Two year'` | One-hot-encoding      |
 | `PaperlessBilling` | Categórica | Si el cliente usa facturación electrónica | `'Yes'`, `'No'`                                | One-hot-encoding      |
 | `PaymentMethod`    | Categórica | Método de pago                            | 4 categorías                                   | One-hot-encoding      |
-| `Tenure`           | Numérica   | Antigüedad en meses                       | int, `0` a `72`                                | Igual                 |
-| `ChargesMonthly`   | Numérica   | Costo mensual del servicio                | float                                          | Igual                 |
-| `ChargesTotal`     | Numérica   | Costo total acumulado del cliente         | float                                          | Igual                 |
+| `Tenure`           | Numérica   | Antigüedad en meses                       | int, `0` a `72`                                | Igual/Escalado        |
+| `ChargesMonthly`   | Numérica   | Costo mensual del servicio                | float                                          | Igual/Escalado        |
+| `ChargesTotal`     | Numérica   | Costo total acumulado del cliente         | float                                          | Igual/Escalado        |
 | `ChargesDaily`     | Numérica   | Estimación diaria del costo del cliente   | float (`Charges.Monthly/30`)                   | Descartada            |
 | `Churn`            | Categórica | Si el cliente abandonó la empresa         | `'Yes'`, `'No'`                                | Label Encoding        |
 
+### Balance de clases
+
+Debido a un desbalance en la variable de respuesta (`Churn`), se llevó a cabo una reducción del Dataset utilizando el algoritmo `NearMiss Version 3`.
+Se optó por reducir la clase mayoritaria para que el aprendizaje de los modelos estuviese basado en datos reales. Ya que, aún con justificación matemática, la creación de datos artificiales implica alimentar el modelo con clientes que no existen en la empresa.
+Esta reducción resultó en un conjunto de datos con **3952 observaciones**.
+
+Sin embargo, para la simulación del pipeline en entorno productivo, se generaron datos artificiales utilizando la técnica `SMOTENC`, ya que el objetivo de esto era demostrar el uso y capacidades del modelo, lo cual no se ve afectado por la utilización de datos creados de manera artificial.
+
+
+### Codificación y reescalado de datos
+
+Debido a los distintos requerimentos de cada familia de algoritmos de Machine Learning, el dataset balanceado fue transformado de diversas maneras para ajustarlos a las necesidades de cada familia.
+
+* Para modelos basados en árboles: `Random Forest Classifier` y `XGBoost Classifier`
+  - Codificación `One-hot`, descartando una variable cuando esta era de naturaleza binaria (dos categorías) a través del parámetro `drop='if_binary'`.
+  - Variables numéricas: `Tenure`, `ChargesMonthly` y `ChargesTotal` no fueron escaladas ya que estos modelos son capaces de gestionar la escala datos.
+  - Dataset: `X`
+
+* Para modelos lineales: `Logistic Regression` y `Support Vector Machine (kernel = 'linear')`
+  - Codificación `One-hot` para variables categóricas con el parámetro `drop='first'` descartando la primera categoría de cada variable para evitar introducir multicolinealidad al modelo.
+  - Variables numéricas: escaladas utilizando `Robust Scaler` debido a la presencia de valores atípicos, el cual utiliza la mediana y el rango intercuartílico (IQR) para escalar los datos, debido a la sensibilidad de dichos modelos a la escala de los datos.
+  - Dataset: `X_linear`
+
+* Para modelos basados en distancia: `K-Nearest Neighbors Classifier`
+  - Codificación `One-hot` con el parámetro `drop='if_binary'`, ya que este tipo de modelos se beneficia de mayor cantidad de variables al calcular la distancia entre observaciones.
+  - Variables numéricas escaladas con `Robust Scaler`, ya que el modelo es sensible a la escala de los datos.
+  - Dataset: `X_scaled`
+ 
+* La variable respuesta (Churn) fue codificada utilizando `Label Encoder`, transformando:
+  - `Yes'` -> `1`
+  - `'No'` -> `0`
 
 <br><br>
 ## 5. Resultados y conclusiones ✍️
