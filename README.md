@@ -1,4 +1,4 @@
-# Proyecto: Telecom X - Etapa 1 - Churn de Clientes
+# Proyecto: Telecom X - Etapa 2 - Machine Learning para Churn de Clientes
 
 <img width="720" height="480" alt="ml_churn" src="https://github.com/user-attachments/assets/47f70705-edb9-45d8-937d-f33dd452d2a5" />
 
