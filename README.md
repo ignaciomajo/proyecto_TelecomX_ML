@@ -93,14 +93,14 @@ Ambos archivos se integraron en un único dataset de **7152 observaciones**. El 
 | `Partner`          | Categórica | Si el cliente tiene pareja                | `'Yes'`, `'No'`                                | One-hot-encoding      |
 | `Dependents`       | Categórica | Si el cliente tiene personas a cargo      | `'Yes'`, `'No'`                                | One-hot-encoding      |
 | `PhoneService`     | Categórica | Si tiene servicio telefónico              | `'Yes'`, `'No'`                                | One-hot-encoding      |
-| `MultipleLines`    | Categórica | Si tiene múltiples líneas telefónicas     | `'Yes'`, `'No'`, `'No phone service'`          | One-hot-encoding      |
+| `MultipleLines`    | Categórica | Si tiene múltiples líneas telefónicas     | `'Yes'`, `'No'`,                               | One-hot-encoding      |
 | `InternetService`  | Categórica | Tipo de conexión a internet               | `'DSL'`, `'Fiber optic'`, `'No'`               | One-hot-encoding      |
-| `OnlineSecurity`   | Categórica | Seguridad en línea                        | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
-| `OnlineBackup`     | Categórica | Respaldo en línea                         | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
-| `DeviceProtection` | Categórica | Protección de dispositivo                 | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
-| `TechSupport`      | Categórica | Soporte técnico                           | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
-| `StreamingTV`      | Categórica | TV en streaming                           | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
-| `StreamingMovies`  | Categórica | Películas en streaming                    | `'Yes'`, `'No'`, `'No internet service'`       | One-hot-encoding      |
+| `OnlineSecurity`   | Categórica | Seguridad en línea                        | `'Yes'`, `'No'`,                               | One-hot-encoding      |
+| `OnlineBackup`     | Categórica | Respaldo en línea                         | `'Yes'`, `'No'`,                               | One-hot-encoding      |
+| `DeviceProtection` | Categórica | Protección de dispositivo                 | `'Yes'`, `'No'`,                               | One-hot-encoding      |
+| `TechSupport`      | Categórica | Soporte técnico                           | `'Yes'`, `'No'`,                               | One-hot-encoding      |
+| `StreamingTV`      | Categórica | TV en streaming                           | `'Yes'`, `'No'`,                               | One-hot-encoding      |
+| `StreamingMovies`  | Categórica | Películas en streaming                    | `'Yes'`, `'No'`,                               | One-hot-encoding      |
 | `Contract`         | Categórica | Tipo de contrato                          | `'Month-to-month'`, `'One year'`, `'Two year'` | One-hot-encoding      |
 | `PaperlessBilling` | Categórica | Si el cliente usa facturación electrónica | `'Yes'`, `'No'`                                | One-hot-encoding      |
 | `PaymentMethod`    | Categórica | Método de pago                            | 4 categorías                                   | One-hot-encoding      |
