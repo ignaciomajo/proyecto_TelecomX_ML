@@ -192,13 +192,13 @@ A partir de este modelo se identificaron las variables más influyentes en la ev
 
 <img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
 <br>
-A partir de las cuales se llevó a cabo en siguiente análisis de impacto:
+A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 
 <img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/422990ad-2f5f-4971-95bf-a8a0ec0a2e77" />
 
 ### Pipeline de prueba
 
-Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos generados artificialmente con la técnica `SMOTENC`.
+Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC`.
 El mismo, recibe un archivo JSON (formato original de la base de datos) con datos crudos (sin ninguna transformación) para producir predicciones.
 Cuenta con dos modos de utilización:
 * `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn > 0.5, Churn = 1, si Probabilidad Churn <= 0.5, Churn = 0)*
@@ -217,7 +217,8 @@ Este enfoque no solo permitió construir un modelo predictivo sólido, sino tamb
 
 ![Static Badge](https://img.shields.io/badge/Python-3.11.7-blue) <br>
 ![Static Badge](https://img.shields.io/badge/Numpy-1.26.4-green) ![Static Badge](https://img.shields.io/badge/pandas-2.2.2-green) ![Static Badge](https://img.shields.io/badge/matplotlib-3.10.0-green)
-![Static Badge](https://img.shields.io/badge/seaborn-0.13.2-green)
+![Static Badge](https://img.shields.io/badge/seaborn-0.13.2-green) ![Static Badge](https://img.shields.io/badge/scikit--learn-1.5.2-green)
+![Static Badge](https://img.shields.io/badge/imbalanced--learn-1.5.2-green) ![Static Badge](https://img.shields.io/badge/xgboost-2.1.3-green)
 
 * `Jupyter Notebook`
 * `Git and GitHub`
