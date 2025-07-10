@@ -15,10 +15,10 @@
 
 ## 1. Descripción del proyecto 📚
 
-* En el presente proyecto se desarrollaron diversos modelos de Machine Learning con el objetivo de identificar clientes propensos a cancelar el servicio en una empresa de telecomunicaciones, seleccionando el modelo con mejor desempeño a través de métricas de evaluación específicas.
+* En el presente proyecto se desarrollaron múltiples modelos supervisados de Machine Learning con el objetivo de identificar clientes propensos a cancelar el servicio en una empresa de telecomunicaciones, seleccionando el modelo con mejor desempeño a través de métricas de evaluación específicas.
 * Se aplicaron transformaciones a los datos para ajustarlos a los requerimientos de cada algoritmo, considerando la sensibilidad a escalas y la multicolinealidad entre variables.
 * Se realizaron múltiples experimentos dentro de cada familia de algoritmos mediante la optimización de hiperparámetros, seleccionando el mejor modelo por familia para luego compararlos entre sí. El criterio de selección final priorizó la métrica **Recall**, con el fin de minimizar los falsos negativos (clientes que abandonan y no son detectados), sin comprometer significativamente la **Precisión**, para asegurar campañas de retención efectivas y sostenibles en términos de costos.
-* Finalmente, se generaron datos artificiales para simular un entorno productivo, permitiendo evaluar el modelo a partir de archivos en su formato original (con variables sin codificar ni escalar), listos para predicción o monitoreo de desempeño.
+* Finalmente, se diseñó un entorno de simulación productiva con datos sintéticos para validar la operación del modelo a partir de entradas en su formato original.
 
 
 ## Acceso al proyecto 📂
@@ -125,12 +125,11 @@ Debido a los distintos requerimentos de cada familia de algoritmos de Machine Le
 
 * Para modelos basados en árboles: `Random Forest Classifier` y `XGBoost Classifier`
   - Codificación `One-hot`, descartando una variable cuando esta era de naturaleza binaria (dos categorías) a través del parámetro `drop='if_binary'`.
-  - Variables numéricas: `Tenure`, `ChargesMonthly` y `ChargesTotal` no fueron escaladas ya que estos modelos son capaces de gestionar la escala datos.
-  - Dataset: `X`
+  - Variables numéricas: `Tenure`, `ChargesMonthly` y `ChargesTotal` no fueron escaladas ya que estos modelos no se ven afectados por la escala de los datos debido a su naturaleza basada en particiones y árboles.
 
 * Para modelos lineales: `Logistic Regression` y `Support Vector Machine (kernel = 'linear')`
   - Codificación `One-hot` para variables categóricas con el parámetro `drop='first'` descartando la primera categoría de cada variable para evitar introducir multicolinealidad al modelo.
-  - Variables numéricas: escaladas utilizando `Robust Scaler` debido a la presencia de valores atípicos, el cual utiliza la mediana y el rango intercuartílico (IQR) para escalar los datos, debido a la sensibilidad de dichos modelos a la escala de los datos.
+  - Variables numéricas: escaladas utilizando `Robust Scaler` debido a la presencia de valores atípicos, el cual utiliza la mediana y el rango intercuartílico (IQR) para escalar los datos (lo cual lo hace resistente a outliers), debido a la sensibilidad de dichos modelos a la escala de los datos.
   - Dataset: `X_linear`
 
 * Para modelos basados en distancia: `K-Nearest Neighbors Classifier`
@@ -139,13 +138,80 @@ Debido a los distintos requerimentos de cada familia de algoritmos de Machine Le
   - Dataset: `X_scaled`
  
 * La variable respuesta (Churn) fue codificada utilizando `Label Encoder`, transformando:
-  - `Yes'` -> `1`
+  - `'Yes'` -> `1`
   - `'No'` -> `0`
 
 <br><br>
 ## 5. Resultados y conclusiones ✍️
 
+### Modelos
 
+Se evaluaron los modelos de cada familia para seleccionar un modelo campeón (**Champion Model**), el cual será implementado en un entorno simulado de producción.
+
+|Model	             |Accuracy	|Precision	|Recall	|F1-score|
+|---------------------|----------|-----------|--------|--------|
+|RandomForest 1	    |0.7131	   |0.7056	   |0.7292	|0.7172  |
+|LogisticRegression 4 |0.6715	   |0.6565	   |0.7167	|0.6853  |
+|KNN 1	             |0.6653	   |0.6416	   |0.7458	|0.6898  |
+|XGB Classifier 3	    |0.7048	   |0.7059	   |0.7000	|0.7029  |
+|SVM 3       	       |0.6778	   |0.6481	   |0.7750	|0.7059  |
+
+Estos, fueron guardados y cargados como `Best {familia algoritmo}`, y que luego fueron evaluados en los datos de prueba *(datos no vistos por los modelos durante el entrenamiento)*:
+
+|Model	                    |Accuracy	|Precision |Recall	|F1-score |
+|----------------------------|---------|----------|---------|---------|
+|Best Random Forest	        |0.6566	|0.6761	  |0.6010	|0.6364   |
+|Best Logistic Regression	  |0.6692	|0.6618	  |0.6919	|0.6765   |
+|Best K-Nearest Neighbors	  |0.6490	|0.6335	  |0.7071	|0.6683   |
+|Best XGBoost Classifier	  |0.6389	|0.6536	  |0.5909	|0.6207   |
+|Best Support Vector Machine |0.6439	|0.6234    |0.7273	|0.6713   |
+
+Al evaluar las métricas obtenidas, se seleccionó el modelo `Best Logistic Regression` como **Champion Model** para implementación en entorno productivo, debido a su capacidad de generalización e interpretabilidad de coeficientes y, especialmente, por su alto Recall con baja variación, priorizando la detección de clientes que abandonan (objetivo de negocio), sin penalizar fuertemente la Precisión.
+
+Como puede verse en las tablas a continuación:
+
+|Model	                     |Recall Validation| Recall Testing |Variación|
+|----------------------------|-----------------|----------------|---------|
+|Best Random Forest	        |0.7292           |0.6010          |-12.82%  |
+|Best Logistic Regression    |0.7167	        |0.6919          |-2.48%   |
+|Best K-Nearest Neighbors    |0.7458           |0.7071	       |-3.87%   |
+|Best XGBoost Classifier     |0.7000           |0.5909          |-10.91%  |
+|Best Support Vector Machine |0.7750		     |0.7273	       |-4.47%   |
+
+|Model                       |F1-score Validation| F1-score Testing|Variación|
+|----------------------------|-------------------|-----------------|---------|
+|Best Random Forest          |0.7172             | 0.6364          |-8.08%   |
+|Best Logistic Regression    |0.6853             | 0.6765          |-0.88%   |
+|Best K-Nearest Neighbors    |0.6898             | 0.6683          |-2.15%   |
+|Best XGBoost Classifier     |0.7029             | 0.6207          |-8.22%   |
+|Best Support Vector Machine |0.7059     	       | 0.6713          |-3.46%   |
+
+
+El modelo `Best Logistic Regression` es el que sufre menos variaciones en sus métricas, demostrando robustez y buena capacidad de generalización frente a datos nuevos.
+A partir de este modelo se identificaron las variables más influyentes en la evasión (tanto protectoras como factores de riesgo) son:
+
+<img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
+<br>
+A partir de las cuales se llevó a cabo en siguiente análisis de impacto:
+
+<img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/422990ad-2f5f-4971-95bf-a8a0ec0a2e77" />
+
+### Pipeline de prueba
+
+Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos generados artificialmente con la técnica `SMOTENC`.
+El mismo, recibe un archivo JSON (formato original de la base de datos) con datos crudos (sin ninguna transformación) para producir predicciones.
+Cuenta con dos modos de utilización:
+* `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn > 0.5, Churn = 1, si Probabilidad Churn <= 0.5, Churn = 0)*
+* `mode='monitor'`: devuelve un archivo JSON con las métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, y un campo con fecha y hora de ejecución del monitoreo.
+
+Dicho pipeline realiza las transformaciones necesarias sobre los datos crudos utilizando los artefactos creados a lo largo del proyecto.
+
+Los resultados pueden verse en:
+* <a href="https://github.com/ignaciomajo/proyecto_TelecomX_ML/tree/main/champion/log/production">Resultados Pipeline Producción</a>
+* <a href="https://github.com/ignaciomajo/proyecto_TelecomX_ML/tree/main/champion/log/monitor">Resultados Pipeline Monitoreo</a>
+
+
+Este enfoque no solo permitió construir un modelo predictivo sólido, sino también demostrar su aplicabilidad real en entornos simulados, sentando las bases para su escalado y mantenimiento en producción.
 
 ## 6. Tecnologías utilizadas 🛠️
 
