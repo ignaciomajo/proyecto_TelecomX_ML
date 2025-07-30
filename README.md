@@ -113,10 +113,11 @@ Ambos archivos se integraron en un único dataset de **7152 observaciones**. El 
 ### Balance de clases
 
 Debido a un desbalance en la variable de respuesta (`Churn`), se llevó a cabo una reducción del Dataset utilizando el algoritmo `NearMiss Version 3`.
-Se optó por reducir la clase mayoritaria para que el aprendizaje de los modelos estuviese basado en datos reales. Ya que, aún con justificación matemática, la creación de datos artificiales implica alimentar el modelo con clientes que no existen en la empresa.
-Esta reducción resultó en un conjunto de datos con **3952 observaciones**.
+Se optó por reducir la clase mayoritaria para que el aprendizaje de los modelos estuviese basado en datos reales. Ya que, aún con justificación matemática, la creación de datos artificiales implica alimentar el modelo con clientes que no existen en la empresa. 
 
-Sin embargo, para la simulación del pipeline en entorno productivo, se generaron datos artificiales utilizando la técnica `SMOTENC`, ya que el objetivo de esto era demostrar el uso y capacidades del modelo, lo cual no se ve afectado por la utilización de datos creados de manera artificial.
+Esta reducción resultó en un conjunto de datos con **3362 observaciones** para el entrenamiento, y conservando la distribución original de los datos para la evaluación de modelos, con un total de **1073 observaciones**, con aproximadamente **72.3%** etiquetados como `Churn = 0` (clase mayoritaria) y **27.7%** etiquetados como `Churn = 1` (clase minoritaria.
+
+Sin embargo, para la simulación del pipeline en entorno productivo, se generaron datos artificiales utilizando la técnica `SMOTENC`, y luego se tomó una muestra mantiendo la distribución inicial de las clases, ya que el objetivo de esto era demostrar el uso y capacidades del modelo, lo cual no se ve afectado por la utilización de datos creados de manera artificial.
 
 
 ### Codificación y reescalado de datos
@@ -147,51 +148,55 @@ Debido a los distintos requerimentos de cada familia de algoritmos de Machine Le
 ### Modelos
 
 Se evaluaron los modelos de cada familia para seleccionar un modelo campeón (**Champion Model**), el cual será implementado en un entorno simulado de producción.
+Estos, fueron guardados y cargados como `Best {familia algoritmo}`:
 
-|Model	             |Accuracy	|Precision	|Recall	|F1-score|
-|---------------------|----------|-----------|--------|--------|
-|RandomForest 1	    |0.7131	   |0.7056	   |0.7292	|0.7172  |
-|LogisticRegression 4 |0.6715	   |0.6565	   |0.7167	|0.6853  |
-|KNN 1	             |0.6653	   |0.6416	   |0.7458	|0.6898  |
-|XGB Classifier 3	    |0.7048	   |0.7059	   |0.7000	|0.7029  |
-|SVM 3       	       |0.6778	   |0.6481	   |0.7750	|0.7059  |
+| Modelo                       | Dataset                      | Accuracy | Precision | Recall | F1-score | AUC    | Umbral |
+|------------------------------|------------------------------|----------|-----------|--------|----------|--------|--------|
+| Best Random Forest           | X                            | 0.7698   | 0.5654    | 0.7273 | 0.6362   | 0.8326 | 0.5    |
+| Best Logistic Regression     | X_linear[selected_features]  | 0.7633   | 0.5657    | 0.6229 | 0.5929   | 0.8137 | 0.5    |
+| Best K-Nearest Neighbors     | X_linear                     | 0.7251   | 0.5027    | 0.6364 | 0.5617   | 0.7513 | 0.5    |
+| Best XGBoost Classifier      | X                            | 0.7568   | 0.5464    | 0.7138 | 0.6190   | 0.8188 | 0.5    |
+| Best Support Vector Machine  | X_linear                     | 0.7540   | 0.5563    | 0.5488 | 0.5525   | 0.8073 | 0.5    |
 
-Estos, fueron guardados y cargados como `Best {familia algoritmo}`, y que luego fueron evaluados en los datos de prueba *(datos no vistos por los modelos durante el entrenamiento)*:
+A los cuales se buscó llevar la métrica **Recall** a un valor mínimo de 0.85 al modificar el umbral de decisión del modelo:
 
-|Model	                    |Accuracy	|Precision |Recall	|F1-score |
-|----------------------------|---------|----------|---------|---------|
-|Best Random Forest	        |0.6566	|0.6761	  |0.6010	|0.6364   |
-|Best Logistic Regression	  |0.6692	|0.6618	  |0.6919	|0.6765   |
-|Best K-Nearest Neighbors	  |0.6490	|0.6335	  |0.7071	|0.6683   |
-|Best XGBoost Classifier	  |0.6389	|0.6536	  |0.5909	|0.6207   |
-|Best Support Vector Machine |0.6439	|0.6234    |0.7273	|0.6713   |
+| Modelo                       | Dataset                      | Accuracy | Precision | Recall | F1-score | AUC    | Umbral |
+|------------------------------|------------------------------|----------|-----------|--------|----------|--------|--------|
+| Best Random Forest           | X                            | 0.7148   | 0.4914    | 0.8620 | 0.6259   | 0.8326 | 0.39   |
+| Best Logistic Regression     | X_linear[selected_features]  | 0.6747   | 0.4539    | 0.8620 | 0.5947   | 0.8137 | 0.39   |
+| Best XGBoost Classifier      | X                            | 0.6925   | 0.4695    | 0.8552 | 0.6062   | 0.8188 | 0.38   |
+| Best Support Vector Machine  | X_linear                     | 0.6785   | 0.4571    | 0.8620 | 0.5974   | 0.8073 | 0.38   |
 
-Al evaluar las métricas obtenidas, se seleccionó el modelo `Best Logistic Regression` como **Champion Model** para implementación en entorno productivo, debido a su capacidad de generalización e interpretabilidad de coeficientes y, especialmente, por su alto Recall con baja variación, priorizando la detección de clientes que abandonan (objetivo de negocio), sin penalizar fuertemente la Precisión.
+***Nota:** ya que `Best K-Nearest Neighbors` no consiguió alcanzar el valor esperado en el rango de umbrales determinados, fue descartado en esta etapa de la evaluación*
 
-Como puede verse en las tablas a continuación:
+Al evaluar las métricas obtenidas, se seleccionó el modelo `Best Random Forest` como **Champion Model** para implementación en entorno productivo, debido a su capacidad de generalización, ya que para alcanzar el nivel esperado de la métrica prioritaria (**Recall**), es el que menos incurre en errores de falsos positivos (clientes identificados como abandono, que no lo eran).
 
-|Model	                     |Recall Validation| Recall Testing |Variación|
-|----------------------------|-----------------|----------------|---------|
-|Best Random Forest	        |0.7292           |0.6010          |-12.82%  |
-|Best Logistic Regression    |0.7167	        |0.6919          |-2.48%   |
-|Best K-Nearest Neighbors    |0.7458           |0.7071	       |-3.87%   |
-|Best XGBoost Classifier     |0.7000           |0.5909          |-10.91%  |
-|Best Support Vector Machine |0.7750		     |0.7273	       |-4.47%   |
-
-|Model                       |F1-score Validation| F1-score Testing|Variación|
-|----------------------------|-------------------|-----------------|---------|
-|Best Random Forest          |0.7172             | 0.6364          |-8.08%   |
-|Best Logistic Regression    |0.6853             | 0.6765          |-0.88%   |
-|Best K-Nearest Neighbors    |0.6898             | 0.6683          |-2.15%   |
-|Best XGBoost Classifier     |0.7029             | 0.6207          |-8.22%   |
-|Best Support Vector Machine |0.7059     	       | 0.6713          |-3.46%   |
+A pesar de mostrar cierto sobreajuste a los datos de entrenamiento, como puede verse en las tablas a continuación, `Best Random Forest` se mantiene como el mejor generalizador.
 
 
-El modelo `Best Logistic Regression` es el que sufre menos variaciones en sus métricas, demostrando robustez y buena capacidad de generalización frente a datos nuevos.
-A partir de este modelo se identificaron las variables más influyentes en la evasión (tanto protectoras como factores de riesgo) son:
+| Model	                       | Recall Train	 | Recall Test	     | Variación   |
+|-------------------------------|----------------|------------------|-------------|
+| Best Random Forest	           | 0.8769	       | 0.7273	        | -14.96%     |
+| Best Logistic Regression	     | 0.6383	       | 0.6229	        | -1.54%      | 
+| Best XGBoost Classifier	     | 0.7555	       | 0.7138	        | -4.17%      | 
+| Best Support Vector Machine   | 0.5996	       | 0.5488	        | -5.08%      | 
+
+| Model	                       | F1-score Train	 | F1-score Test	     | Variación   |
+|-------------------------------|-------------------|---------------------|-------------|
+| Best Random Forest	           | 0.8673	          | 0.6362              | -23.11%     |
+| Best Logistic Regression	     | 0.6301	          | 0.5929	           | -3.72%      |
+| Best XGBoost Classifier	     | 0.7591	          | 0.6190	           | -14.01%     |
+| Best Support Vector Machine	  | 0.6126	          | 0.5525	           | -6.01%      |
+
+Las **10 variables más importantes** determinadas por el modelo `Best Random Forest` son:
+
+<img width="2963" height="1763" alt="Importancia_variables_RandomForest_importancias" src="https://github.com/user-attachments/assets/464d14c7-e239-44c6-a36e-04a272315f2b" />
+
+Sin embargo, dado que este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
 
 <img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
 <br>
+
 A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 
 <img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/422990ad-2f5f-4971-95bf-a8a0ec0a2e77" />
@@ -201,7 +206,8 @@ A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC`.
 El mismo, recibe un archivo JSON (formato original de la base de datos) con datos crudos (sin ninguna transformación) para producir predicciones.
 Cuenta con dos modos de utilización:
-* `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn > 0.5, Churn = 1, si Probabilidad Churn <= 0.5, Churn = 0)*
+
+* `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn >= 0.39, Churn = 1, si Probabilidad Churn < 0.39, Churn = 0)*
 * `mode='monitor'`: devuelve un archivo JSON con las métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, y un campo con fecha y hora de ejecución del monitoreo.
 
 Dicho pipeline realiza las transformaciones necesarias sobre los datos crudos utilizando los artefactos creados a lo largo del proyecto.
