@@ -194,7 +194,7 @@ Las **10 variables más importantes** determinadas por el modelo `Best Random Fo
 
 <img width="2963" height="1763" alt="Importancia_variables_RandomForest_importancias" src="https://github.com/user-attachments/assets/464d14c7-e239-44c6-a36e-04a272315f2b" />
 
-Sin embargo, dado que este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
+Sin embargo, este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
 
 <img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
 <br>
