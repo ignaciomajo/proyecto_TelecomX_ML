@@ -207,7 +207,7 @@ A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 
 ### Pipeline de prueba
 
-Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC`.
+Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC` (tomando una muestra que respete la distribución origianl de los datos).
 El mismo, recibe un archivo JSON (formato original de la base de datos) con datos crudos (sin ninguna transformación) para producir predicciones.
 Cuenta con dos modos de utilización:
 
