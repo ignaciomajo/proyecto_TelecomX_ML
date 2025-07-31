@@ -212,7 +212,7 @@ El mismo, recibe un archivo JSON (formato original de la base de datos) con dato
 Cuenta con dos modos de utilización:
 
 * `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn >= 0.39, Churn = 1, si Probabilidad Churn < 0.39, Churn = 0)*
-* `mode='monitor'`: devuelve un archivo JSON con las métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, y un campo con fecha y hora de ejecución del monitoreo.
+* `mode='monitor'`: devuelve un archivo JSON con un campo con fecha y hora de ejecución del monitoreo (`Model`), sus métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, para umbral de decisión por defecto y umbral de decisión modificado, y tiempo de predicción.
 
 Dicho pipeline realiza las transformaciones necesarias sobre los datos crudos utilizando los artefactos creados a lo largo del proyecto.
 
