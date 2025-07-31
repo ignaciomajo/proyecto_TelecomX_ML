@@ -196,12 +196,14 @@ Las **10 variables más importantes** determinadas por el modelo `Best Random Fo
 
 Sin embargo, este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
 
-<img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
+<img width="2963" height="1763" alt="Coeficiente_variables_LogReg_coeficientes" src="https://github.com/user-attachments/assets/d1ab92c6-d464-4dca-8b44-b331ddf3ee0b" />
+
 <br>
 
 A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 
-<img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/422990ad-2f5f-4971-95bf-a8a0ec0a2e77" />
+<img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/ee6bdcd6-9203-4258-947b-e86882fece5a" />
+
 
 ### Pipeline de prueba
 
