@@ -117,7 +117,7 @@ Ambos archivos se integraron en un único dataset de **7152 observaciones**. El 
 Debido a un desbalance en la variable de respuesta (`Churn`), se llevó a cabo una reducción del Dataset utilizando el algoritmo `NearMiss Version 3`.
 Se optó por reducir la clase mayoritaria para que el aprendizaje de los modelos estuviese basado en datos reales. Ya que, aún con justificación matemática, la creación de datos artificiales implica alimentar el modelo con clientes que no existen en la empresa. 
 
-Esta reducción resultó en un conjunto de datos con **3362 observaciones** para el entrenamiento, y conservando la distribución original de los datos para la evaluación de modelos, con un total de **1073 observaciones**, con aproximadamente **72.3%** etiquetados como `Churn = 0` (clase mayoritaria) y **27.7%** etiquetados como `Churn = 1` (clase minoritaria.
+Esta reducción resultó en un conjunto de datos con **3362 observaciones** para el entrenamiento, y conservando la distribución original de los datos para la evaluación de modelos, con un total de **1073 observaciones**, con aproximadamente **72.3%** etiquetados como `Churn = 0` (clase mayoritaria) y **27.7%** etiquetados como `Churn = 1` (clase minoritaria).
 
 Sin embargo, para la simulación del pipeline en entorno productivo, se generaron datos artificiales utilizando la técnica `SMOTENC`, y luego se tomó una muestra mantiendo la distribución inicial de las clases, ya que el objetivo de esto era demostrar el uso y capacidades del modelo, lo cual no se ve afectado por la utilización de datos creados de manera artificial.
 
@@ -194,23 +194,25 @@ Las **10 variables más importantes** determinadas por el modelo `Best Random Fo
 
 <img width="2963" height="1763" alt="Importancia_variables_RandomForest_importancias" src="https://github.com/user-attachments/assets/464d14c7-e239-44c6-a36e-04a272315f2b" />
 
-Sin embargo, dado que este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
+Sin embargo, este modelo no permite evaluar la dirección y magnitud del impacto en la Evasión de dichas variables. Por lo que, en el reporte ejecutivo presente en el directorio `reports` 📂, se complementó el análisis con los coeficientes determinados por `Best Logistic Regression`
 
-<img width="2963" height="1763" alt="Coeficiente_variables_LogReg_best_coef" src="https://github.com/user-attachments/assets/d6ed9be9-6099-4dad-9ef1-385274af71f7" />
+<img width="2963" height="1763" alt="Coeficiente_variables_LogReg_coeficientes" src="https://github.com/user-attachments/assets/d1ab92c6-d464-4dca-8b44-b331ddf3ee0b" />
+
 <br>
 
 A partir de las cuales se llevó a cabo el siguiente análisis de impacto:
 
-<img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/422990ad-2f5f-4971-95bf-a8a0ec0a2e77" />
+<img width="3570" height="1768" alt="tabla_coef_logreg" src="https://github.com/user-attachments/assets/ee6bdcd6-9203-4258-947b-e86882fece5a" />
+
 
 ### Pipeline de prueba
 
-Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC`.
+Finalmente, se desarrolló la simulación de un pipeline para la implementación del modelo en entorno productivo, utilizando datos sintéticos generados con la técnica `SMOTENC` (tomando una muestra que respete la distribución origianl de los datos).
 El mismo, recibe un archivo JSON (formato original de la base de datos) con datos crudos (sin ninguna transformación) para producir predicciones.
 Cuenta con dos modos de utilización:
 
 * `mode='production'`: que devuelve un archivo JSON con `CustomerID`, `Probabilidad Churn` y `Churn` *(Etiqueta: si Probabilidad Churn >= 0.39, Churn = 1, si Probabilidad Churn < 0.39, Churn = 0)*
-* `mode='monitor'`: devuelve un archivo JSON con las métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, y un campo con fecha y hora de ejecución del monitoreo.
+* `mode='monitor'`: devuelve un archivo JSON con un campo con fecha y hora de ejecución del monitoreo (`Model`), sus métricas `Accuracy`, `Precision`, `Recall` y `F1-score`, para umbral de decisión por defecto y umbral de decisión modificado, y tiempo de predicción.
 
 Dicho pipeline realiza las transformaciones necesarias sobre los datos crudos utilizando los artefactos creados a lo largo del proyecto.
 
