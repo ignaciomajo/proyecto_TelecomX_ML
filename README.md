@@ -117,7 +117,7 @@ Ambos archivos se integraron en un único dataset de **7152 observaciones**. El 
 Debido a un desbalance en la variable de respuesta (`Churn`), se llevó a cabo una reducción del Dataset utilizando el algoritmo `NearMiss Version 3`.
 Se optó por reducir la clase mayoritaria para que el aprendizaje de los modelos estuviese basado en datos reales. Ya que, aún con justificación matemática, la creación de datos artificiales implica alimentar el modelo con clientes que no existen en la empresa. 
 
-Esta reducción resultó en un conjunto de datos con **3362 observaciones** para el entrenamiento, y conservando la distribución original de los datos para la evaluación de modelos, con un total de **1073 observaciones**, con aproximadamente **72.3%** etiquetados como `Churn = 0` (clase mayoritaria) y **27.7%** etiquetados como `Churn = 1` (clase minoritaria.
+Esta reducción resultó en un conjunto de datos con **3362 observaciones** para el entrenamiento, y conservando la distribución original de los datos para la evaluación de modelos, con un total de **1073 observaciones**, con aproximadamente **72.3%** etiquetados como `Churn = 0` (clase mayoritaria) y **27.7%** etiquetados como `Churn = 1` (clase minoritaria).
 
 Sin embargo, para la simulación del pipeline en entorno productivo, se generaron datos artificiales utilizando la técnica `SMOTENC`, y luego se tomó una muestra mantiendo la distribución inicial de las clases, ya que el objetivo de esto era demostrar el uso y capacidades del modelo, lo cual no se ve afectado por la utilización de datos creados de manera artificial.
 
