@@ -48,25 +48,27 @@ Esto descargará un archivo comprimido `.zip`, que podras alojar en el directori
    - Funciones
 3. Preprocesamiento de datos
    - Encoding de variables categóricas
-   - Balance del dataset
    - Normalizacion de datos
    - Correlacion entre variables
    - Análisis de multicolinealidad
    - Análisis dirigido
 4. Modelado de datos
+   - Train Test split
+   - Escalado de variables numéricas
+   - Balance del dataset
    - Baseline Model - Decision Tree Classifier
    - Random Forest Classifier
    - Logistic Regression
    - K-Nearest Neighbors
    - XGBoost Classifier
    - Support Vector Machine
-5. Evaluación Best Models
+6. Evaluación Best Models
    - Métricas Generales
    - Subajuste (Underfitting) y Sobreajuste (Overfitting)
    - Matrices de confusión
    - Importancias y Coeficientes
-6. Champion Model
-7. Pipeline de prueba en entorno productivo
+7. Champion Model
+8. Pipeline de prueba en entorno productivo
    - Generación de datos artificiales
    - Pipeline de prueba
 
